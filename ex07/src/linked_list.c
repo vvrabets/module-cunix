@@ -1,4 +1,4 @@
-#include"linked_list.h"
+#include "../include/linked_list.h"
 #include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
@@ -29,11 +29,14 @@ void list_destroy(node_t **head, void (*fp)(void *data)){
 };
 
 void list_push(node_t *head, void *data){
-    node_t * new_node;
-    new_node = malloc(sizeof(node_t));
-    new_node->data = data;
-    new_node->next = head;
-    head = new_node;
+  node_t* p = head;
+  while((p->next) != NULL){p = p->next;};
+  node_t* next =(node_t*) malloc(sizeof(node_t));
+  char* next_data =(char*) malloc(strlen(data)+1);
+  strcpy(next_data, data);
+  next->data = next_data;
+  next->next = NULL;
+  p->next = next;
 };
 
 void list_unshift(node_t **head, void *data){
@@ -75,7 +78,7 @@ void *list_remove(node_t **head, int pos){
   };
 };
 
-void    list_print(node_t *head){
+void list_print(node_t *head){
   node_t * current = head;
     while (current != NULL) {
         printf("%d\n", current->data);
@@ -83,7 +86,7 @@ void    list_print(node_t *head){
     };
 };
 
-void    list_visitor(node_t *head, void (*fp)(void *data)){
+void list_visitor(node_t *head, void (*fp)(void *data)){
   node_t* p = head;
   while(p != NULL){
     (*fp)(p->next);
