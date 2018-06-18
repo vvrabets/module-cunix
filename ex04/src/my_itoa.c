@@ -4,16 +4,17 @@
 
 char* my_itoa(int nmb)
 {
-    char *str =(char*) malloc(100);
+    char *str =(char*) malloc(12);
     char *answ = str;
-    int num = nmb;
     int j = 1;
-    
-    if (num < 0 ){
-      *str='-';
-       str++;
-       num=-num;
+
+    if (nmb < 0 ){
+      nmb = -1 * nmb;
+      *str = '-';
+      str++;
     };
+
+    int num = nmb;
 
     while (num > 9) {
       num = num/10;
@@ -30,12 +31,4 @@ char* my_itoa(int nmb)
   *str = '\0';
   return answ;
 };
-
-
-
-
-
-
-
-
 
