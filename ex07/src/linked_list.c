@@ -56,7 +56,7 @@ void  list_unshift(node_t **head, void *data){
   *head = first;
 }
 
-void nop(void* data){}
+
 void free_data(void* data){
     free(data);
 }
