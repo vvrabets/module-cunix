@@ -3,93 +3,101 @@
 #include<string.h>
 #include<stdio.h>
 
+
 node_t  *list_create(void *data){
-  node_t *node = malloc(sizeof(node_t));
-  node -> data = malloc(strlen((char*)data+1));
-  strcpy(node->data, data);
-  node->next=NULL;
-};
+  node_t *new_node = malloc(sizeof(node_t));
+  if(new_node == NULL)
+    {
+        printf("Error creating a new node.\n");
+        exit(0);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
 
-void dest_rc(node_t **head,void (*fp)(void *data)){
-  if((**head).next==NULL){
-    return ;
-  }else{
-    (*head)++;
-    dest_rc(head, fp);
-    free((**head).next);};
-};
+void list_print(node_t *head){
+  if(!head)
+    printf("NULL");
+  node_t* tmp = head;
+  int i = 0;
+  while(tmp!=NULL){
+       printf("%d)%s\n", i, tmp->data);
+       tmp=tmp->next;
+       i++;
+  }
+}
 
-void list_destroy(node_t **head, void (*fp)(void *data)){
-  if(!(*head)){
-    return ;
-  }else{
-    dest_rc(head, fp);
-    free((*head));
-  };
-};
+void dest_r(node_t *head, void (*fp)(void *data)){
+    if(head == NULL)
+        return;
+    dest_r(head->next, fp);
+    (*fp)(head->data);
+    free(head);
+    head = NULL;
+    return;
+}
+
+void  list_destroy(node_t **head, void (*fp)(void *data)){
+  dest_r(*head, fp);
+  *head = NULL;
+}
 
 void list_push(node_t *head, void *data){
-  node_t* p = head;
-  while((p->next) != NULL){p = p->next;};
-  node_t* next =(node_t*) malloc(sizeof(node_t));
-  char* next_data =(char*) malloc(strlen(data)+1);
-  strcpy(next_data, data);
-  next->data = next_data;
-  next->next = NULL;
-  p->next = next;
-};
+  node_t* tmp = head;
+  while((tmp->next) != NULL){tmp = tmp->next;};
+  tmp->next=list_create(data);
+}
 
-void list_unshift(node_t **head, void *data){
+void  list_unshift(node_t **head, void *data){
   node_t* first = (node_t*) malloc(sizeof(node_t));
   first->data = data;
   first->next = *head;
   *head = first;
-};
+}
 
 void nop(void* data){}
+void free_data(void* data){
+    free(data);
+}
+
+
 void *list_pop(node_t **head){
-  node_t* p = *head;
-  while(p->next->next != NULL){
-    p = p->next;
-  }
-  node_t* p_del = p+1;
-  list_destroy(&(p_del), &nop);
-  p->next = NULL;
-};
+  node_t *temp = *head;
+    if (temp) {
+        *head = temp->next;
+    }
+    return temp;
+}
 
 void *list_shift(node_t **head){
   node_t* new_head = (*head)->next;
   free((*head)->data);
   free(*head);
   *head = new_head;
-};
+}
 
 void *list_remove(node_t **head, int pos){
-  node_t* p = (*head)+pos;
-  if(p == *head)
-   list_shift(head);
-  if(p->next == NULL){
-    list_pop(head);
-  }
-  else{
-    (*head - 1)->data = (*head - 1)->data;
-    free((*head)->data);
-    free(*head);
-  };
-};
-
-void list_print(node_t *head){
-  node_t * current = head;
-    while (current != NULL) {
-        printf("%d\n", current->data);
-        current = current->next;
-    };
-};
+  if(!*head)
+    return NULL;
+  node_t fp;
+  fp.next = *head;
+  node_t* p = &fp;
+  for(int i = 0; i < pos; i++)
+      p = p->next;
+  free(p->next->data);
+  node_t* to_remove = p->next;
+  p->next = p->next->next;
+  free(to_remove);
+  return *head;
+}
 
 void list_visitor(node_t *head, void (*fp)(void *data)){
-  node_t* p = head;
-  while(p != NULL){
-    (*fp)(p->next);
-    p=p->next;
+  node_t* tmp = head;
+  while(tmp != NULL){
+    (*fp)(tmp->next);
+    tmp=tmp->next;
   }
-};
+}
+
+
