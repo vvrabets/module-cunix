@@ -30,14 +30,15 @@ void hash_destroy(hashtable_t *ht, void (*fp)(void *data)){
 }
 
 unsigned int hash_func(char *key){
-  int result = 0;
-  if (key == NULL)
+  int sum, i;
+  if (key == NULL){
     return 0;
-  while (*key != '\0') {
-    result += *key;
-    key++;
   }
-  return result;
+  sum = 0;
+  for (i = 0; *key != '\0'; ++i){
+    sum += key[i];
+  }
+  return sum;
 }
 
 
