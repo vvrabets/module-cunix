@@ -5,7 +5,7 @@ RM					:= rm -rf
 
 LDFLAGS				+= -Llib
 
-CFLAGS				+= -Iinclude -Wall -Wextra -Werror -g
+CFLAGS				+= -Iinclude
 
 SRCS				:= $(wildcard src/*.c)
 
@@ -30,4 +30,4 @@ test:				re
 						@(./$(NAME) && echo "Test success" || echo "Test Fails")
 
 debug:              $(NAME)
-					valgrind -v --leak-check=full --track-origins=yes ./$(NAME)
+
