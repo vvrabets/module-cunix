@@ -1,19 +1,18 @@
-#include "reader.c"
 #include "../include/filler.h"
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
 req_t* parse_all(char *all)
 {
   req_t *r = malloc(sizeof(req_t));
   map_t *m = malloc(sizeof(map_t));
   elem_t *e = malloc(sizeof(elem_t));
-  stream_t *s = fake_read();
   char *sp;
   int i = 1;
 
-  sp = strtok(s->str, "\n");
-  r->symbol = s->str[0];
+  sp = strtok(all, "\n");
+  r->symbol = all[0];
   //printf("%c\n", r->symbol);
   while (sp) {
     if(i == 1){
@@ -83,10 +82,11 @@ pos_t parse_size(char *answer)
   return p;
 }
 
-int main()
+/*int main()
 {
   stream_t *s = fake_read();
   req_t *r = parse_all(s->str);
+  printf("%c", r->symbol);
 
   return 0;
-}
+}*/

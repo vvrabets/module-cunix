@@ -1,5 +1,6 @@
-#include "my_string.c"
+#include "../src/my_string.c"
 #include<stdio.h>
+
 
 stream_t* fake_read()
 {
@@ -12,9 +13,4 @@ stream_t* fake_read()
   return s;
 }
 
-/*int main()
-{
-  stream_t *s = fake_read();
-  printf("%s", s->str);
-  return 0;
-}*/
+
