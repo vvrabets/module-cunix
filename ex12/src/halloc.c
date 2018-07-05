@@ -12,37 +12,32 @@ char allocate = 'a';
 
 char* find_block(size_t size)
 {
-    char *mover;
-    mover = base;
+  char *mover;
+  mover = base;
 
-    long unsigned int num = 0;
+  long unsigned int num = 0;
 
-    //char *next = NULL;
-
-    while(true)
+  while(true)
+  {
+    num = *(int *)(mover+1);
+    if(*mover == freeflag && num >= size + 5)
     {
-        num = *(int *)(mover+1);
-
-        if(*mover == freeflag && num >= size + 5)
-        {
-            return (mover);
-        }else if(!mover)
-        {
-            return NULL;
-        }else{
-
-            if( mover + num + size >= mallocArray + 55000)
-            {
-                printf("Memory Overflow\n");
-                return NULL;
-            }
-
-            mover = mover + num;
-        }
+      return (mover);
+    }else if(!mover)
+    {
+    return NULL;
+    }else{
+    if( mover + num + size >= mallocArray + 55000)
+    {
+      printf("Memory Overflow\n");
+      return NULL;
+    }
+      mover = mover + num;
+    }
 
     }
-    mover = sbrk((long int)mover);
-    return (mover);
+
+  return (mover);
 }
 
 void split_block(char* b, size_t s)
@@ -66,40 +61,32 @@ void split_block(char* b, size_t s)
 
 void *halloc(size_t size)
 {
-    if(size <= 0)
+  if(size <= 0)
+  {
+    return NULL;
+  }
+
+  if(!*base)
+  {
+    *base = freeflag;
+    *(int *)(base+1) = 55000 - 5;
+  }
+
+  size_t s = size;
+  char* b = find_block(s);
+  if(b)
+  {
+    if(*(long unsigned int *)(b+1) >= size)
     {
-        return NULL;
+      split_block(b,s);
     }
-
-    if(!*base)
-    {
-        *base = freeflag;
-        *(int *)(base+1) = 55000 - 5;
-
-    }
-
-    size_t s = size;
-
-    char* b = find_block(s);
-
-    if(b)
-    {
-
-       if(*(long unsigned int *)(b+1) >= size)
-       {
-           split_block(b,s);
-
-       }
-    }else{
-        return NULL;
-    }
-
-    return (b);
-
-
+  }else{
+    return NULL;
+  }
+  return (b);
 }
 
-void free(char* address)
+void myfree(char* address)
 {
     char *mover, *previous, *next;
     mover = base;
@@ -139,29 +126,28 @@ void free(char* address)
     }
 }
 
-char* addr1 ;
+
 //addr1 =  halloc(8);
 
-/*void main()
-{
-    char* addr1 = halloc(8);
-    char* addr2;
-    addr2 = halloc(400);
-    char* addr3 = halloc(100);
-
-    printf(" 8 %p \n",addr1);
-    printf(" 400 %p \n",addr2);
-    printf(" 100 %p \n",addr3);
-
-
-    free(addr3);//100
-    free(addr2);//400
-
-    char* addr4 = halloc(500);
-    printf(" 500 %p \n",addr4);
-}*/
-
 void main()
+{
+  char* addr1 = halloc(8);
+  char* addr2;
+  addr2 = halloc(400);
+  char* addr3 = halloc(100);
+
+  printf(" 8 %p \n",addr1);
+  printf(" 400 %p \n",addr2);
+  printf(" 100 %p \n",addr3);
+
+  myfree(addr3);//100
+  myfree(addr2);//400
+
+  char* addr4 = halloc(500);
+  printf(" 500 %p \n",addr4);
+}
+
+/*void main()
 {
   char* addr1 = halloc(8);
   char *foo = (char *)halloc(20);
@@ -184,4 +170,4 @@ void main()
 		a[i] = tmp;
     printf("cicle %i\n", i);
 	}
-}
+}*/
