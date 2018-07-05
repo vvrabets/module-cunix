@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <unistd.h>
 
 char mallocArray[55000] = {'\0'};
 
@@ -30,7 +31,7 @@ char* find_block(size_t size)
             return NULL;
         }else{
 
-            if( mover + num + size >= mallocArray + 24999)
+            if( mover + num + size >= mallocArray + 55000)
             {
                 printf("Memory Overflow\n");
                 return NULL;
@@ -40,7 +41,7 @@ char* find_block(size_t size)
         }
 
     }
-
+    mover = sbrk((long int)mover);
     return (mover);
 }
 
@@ -73,7 +74,7 @@ void *halloc(size_t size)
     if(!*base)
     {
         *base = freeflag;
-        *(int *)(base+1) = 24999 - 5;
+        *(int *)(base+1) = 55000 - 5;
 
     }
 
@@ -176,7 +177,9 @@ void main()
   printf("memory allocated\n");
 	for (int i = 0; i < 1000; i++)
 	{
+    printf("we are in for already\n");
 		int *tmp = (int *)halloc(sizeof(int));
+    printf("memory allocated\n");
 		*tmp = i;
 		a[i] = tmp;
     printf("cicle %i\n", i);
