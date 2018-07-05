@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <assert.h>
-#include <unistd.h>
-//#include "test.h"
+#include "test.h"
 //9223372036854775807
 char mallocArray[55000] = {'\0'};
 char *base = mallocArray;
@@ -114,45 +112,3 @@ void myfree(char* address)
     }
 }
 
-/*void main()
-{
-  char* addr1 = halloc(8);
-  char* addr2;
-  addr2 = halloc(400);
-  char* addr3 = halloc(100);
-
-  printf(" 8 %p \n",addr1);
-  printf(" 400 %p \n",addr2);
-  printf(" 100 %p \n",addr3);
-
-  myfree(addr3);//100
-  myfree(addr2);//400
-
-  char* addr4 = halloc(500);
-  printf(" 500 %p \n",addr4);
-}*/
-/*
-void main()
-{
-  char* addr1 = halloc(8);
-  char *foo = (char *)halloc(20);
-	assert( *foo >  0x0000000000000001);
-	myfree(foo);
-  printf("first assert\n");
-  foo = (char *) halloc(10000000000000000000u);
-	assert(foo == NULL);
-	myfree(foo);
-  printf("second assert\n");
-  printf("stage 1 passed\n");
-  int **a = (int **)halloc(sizeof(int)* 10000);
-  printf("memory allocated\n");
-	for (int i = 0; i < 1000; i++)
-	{
-    printf("we are in for already\n");
-		int *tmp = (int *)halloc(sizeof(int));
-    printf("memory allocated\n");
-		*tmp = i;
-		a[i] = tmp;
-    printf("cicle %i\n", i);
-	}
-}*/
