@@ -1,115 +1,93 @@
-#include <stdio.h>
-#include <stdbool.h>
+#include <assert.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include "test.h"
-//9223372036854775807
-char mallocArray[55000] = {'\0'};
-char *base = mallocArray;
 
-char freeflag = 'f';
-char allocate = 'a';
+struct block_meta {
+  size_t size;
+  struct block_meta *next;
+  int free;
+};
 
-char* find_block(size_t size)
-{
-  char *mover;
-  mover = base;
+#define align8(x) (((((x) - 1) >> 3) << 3) + 8)
+#define META_SIZE sizeof(struct block_meta)
 
-  long unsigned int num ;
+void *global_base = NULL;
 
-  while(true)
-  {
-    num = *(int *)(mover+1);
-    if(*mover == freeflag && num >= size + 5)
-    {
-      return (mover);
-    }else if(!mover)
-    {
-      return NULL;
-    }else{
-    if( mover + num + size >= mallocArray + 54999)
-    {
-      printf("Memory Overflow\n");
-      return NULL;
-    }
-      mover = mover + num;
-    }
+struct block_meta *find_free_block(struct block_meta **last, size_t size) {
+  struct block_meta *current = global_base;
 
-    }
+  while (current && !(current->free && current->size >= size)) {
+    *last = current;
+    current = current->next;
+  }
 
-  return (mover);
+  return current;
 }
 
-void split_block(char* b, size_t s)
-{
-  char* temp;
-  int b_size = *(int *)(b + 1);
-  b_size = b_size - s ;
-  temp = b + s ;
-  *temp = freeflag;
-  *(int *)(temp + 1) = b_size;
-  *(int *)(b + 1) = s;
-  *b = allocate;
-}
+struct block_meta *request_space(struct block_meta* last, size_t size) {
+  struct block_meta *block;
+  block = sbrk(0);
+  void *request = sbrk(size + META_SIZE);
 
-void *halloc(size_t size)
-{
-  if(size <= 0)
-  {
+  if (request == (void*) -1) {
     return NULL;
   }
 
-  if(!*base)
-  {
-    *base = freeflag;
-    *(int *)(base+1) = 54999 ;
+  if (last) {
+    last->next = block;
   }
 
-  size_t s = size;
-  char* b = find_block(s);
-  if(b)
-  {
-    if(*(long unsigned int *)(b+1) >= size)
-    {
-      split_block(b,s);
-    }
-  }else{
-    return NULL;
-  }
-  return (b);
+  block->size = size;
+  block->next = NULL;
+  block->free = 0;
+
+  return block;
 }
 
-void myfree(void* add)
-{
-  char * address = (char *)add;
-  char *mover, *previous, *next;
-  mover = base;
-  int num = *(int *)(mover + 1);
-  while(true)
-  {
-    num = *(int *)(mover + 1);
-    if(mover == address)
-    {
-      break;
-    }else if(!*mover)
-    {
-      break;
-    }else
-      {
-        previous = mover;
-        mover = mover + num;
-        next = mover + *(int *)(mover + 1);
+void *halloc(size_t size) {
+  struct block_meta *block;
+
+  if (size <= 0) {
+    return NULL;
+  }
+
+  size = align8(size);
+
+  if (!global_base) {
+    block = request_space(NULL, size);
+
+    if (!block) {
+      return NULL;
+    }
+    global_base = block;
+  } else {
+    struct block_meta *last = global_base;
+    block = find_free_block(&last, size);
+
+    if (!block) {
+      block = request_space(last, size);
+      if (!block) {
+        return NULL;
       }
+    } else {
+      block->free = 0;
     }
-    if(*next == freeflag)
-    {
-      *mover = freeflag;
-      *(int *)(mover + 1) = *(int *)(mover + 1) + *(int *)(next + 1);
-    }
-    if(*previous == freeflag)
-    {
-      *mover = freeflag;
-      *(int *)(previous + 1) = *(int *)(mover + 1) + *(int *)(previous + 1);
-    }else{
-      *address = freeflag;
-    }
+  }
+
+  return(block+1);
 }
 
+struct block_meta *get_block_ptr(void *ptr) {
+  return (struct block_meta*)ptr - 1;
+}
+
+void myfree(void *ptr) {
+  if (!ptr) {
+    return;
+  }
+
+  struct block_meta* block_ptr = get_block_ptr(ptr);
+  block_ptr->free = 1;
+}

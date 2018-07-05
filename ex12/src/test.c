@@ -7,7 +7,7 @@
 int test_small()
 {
 	char *foo = (char *)halloc(20);
-	assert( *foo >  0x0000000000000001);
+	assert( foo >  (char*)0x0000000000000001);
 	myfree(foo);
 	foo = (char *) halloc(10000000000000000000u);
 	assert(foo == NULL);
