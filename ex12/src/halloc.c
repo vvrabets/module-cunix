@@ -77,8 +77,9 @@ void *halloc(size_t size)
   return (b);
 }
 
-void myfree(char* address)
+void myfree(void* add)
 {
+  char * address = (char *)add;
   char *mover, *previous, *next;
   mover = base;
   int num = *(int *)(mover + 1);
