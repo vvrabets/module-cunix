@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <unistd.h>
 
+//9223372036854775807
 char mallocArray[55000] = {'\0'};
 char *base = mallocArray;
 
@@ -14,7 +15,7 @@ char* find_block(size_t size)
   char *mover;
   mover = base;
 
-  long unsigned int num = 0;
+  long unsigned int num ;
 
   while(true)
   {
@@ -43,11 +44,11 @@ void split_block(char* b, size_t s)
 {
   char* temp;
   int b_size = *(int *)(b + 1);
-  b_size = b_size - s - 5;
-  temp = b + s + 5;
+  b_size = b_size - s ;
+  temp = b + s ;
   *temp = freeflag;
   *(int *)(temp + 1) = b_size;
-  *(int *)(b + 1) = s+5;
+  *(int *)(b + 1) = s;
   *b = allocate;
 }
 
@@ -61,7 +62,7 @@ void *halloc(size_t size)
   if(!*base)
   {
     *base = freeflag;
-    *(int *)(base+1) = 54999 - 5;
+    *(int *)(base+1) = 54999 ;
   }
 
   size_t s = size;
@@ -112,7 +113,7 @@ void myfree(char* address)
     }
 }
 
-void main()
+/*void main()
 {
   char* addr1 = halloc(8);
   char* addr2;
@@ -128,9 +129,9 @@ void main()
 
   char* addr4 = halloc(500);
   printf(" 500 %p \n",addr4);
-}
+}*/
 
-/*void main()
+void main()
 {
   char* addr1 = halloc(8);
   char *foo = (char *)halloc(20);
@@ -153,4 +154,4 @@ void main()
 		a[i] = tmp;
     printf("cicle %i\n", i);
 	}
-}*/
+}
