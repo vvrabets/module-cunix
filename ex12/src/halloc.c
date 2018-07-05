@@ -24,9 +24,9 @@ char* find_block(size_t size)
       return (mover);
     }else if(!mover)
     {
-    return NULL;
+      return NULL;
     }else{
-    if( mover + num + size >= mallocArray + 55000)
+    if( mover + num + size >= mallocArray + 54999)
     {
       printf("Memory Overflow\n");
       return NULL;
@@ -61,7 +61,7 @@ void *halloc(size_t size)
   if(!*base)
   {
     *base = freeflag;
-    *(int *)(base+1) = 55000 - 5;
+    *(int *)(base+1) = 54999 - 5;
   }
 
   size_t s = size;
@@ -112,7 +112,7 @@ void myfree(char* address)
     }
 }
 
-/*void main()
+void main()
 {
   char* addr1 = halloc(8);
   char* addr2;
@@ -128,9 +128,9 @@ void myfree(char* address)
 
   char* addr4 = halloc(500);
   printf(" 500 %p \n",addr4);
-}*/
+}
 
-void main()
+/*void main()
 {
   char* addr1 = halloc(8);
   char *foo = (char *)halloc(20);
@@ -153,4 +153,4 @@ void main()
 		a[i] = tmp;
     printf("cicle %i\n", i);
 	}
-}
+}*/
