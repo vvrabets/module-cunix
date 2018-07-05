@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <unistd.h>
-
+//#include "test.h"
 //9223372036854775807
 char mallocArray[55000] = {'\0'};
 char *base = mallocArray;
@@ -93,11 +93,12 @@ void myfree(char* address)
     }else if(!*mover)
     {
       break;
-    }else{
-      previous = mover;
-      mover = mover + num;
-      next = mover + *(int *)(mover + 1);
-    }
+    }else
+      {
+        previous = mover;
+        mover = mover + num;
+        next = mover + *(int *)(mover + 1);
+      }
     }
     if(*next == freeflag)
     {
@@ -130,7 +131,7 @@ void myfree(char* address)
   char* addr4 = halloc(500);
   printf(" 500 %p \n",addr4);
 }*/
-
+/*
 void main()
 {
   char* addr1 = halloc(8);
@@ -154,4 +155,4 @@ void main()
 		a[i] = tmp;
     printf("cicle %i\n", i);
 	}
-}
+}*/

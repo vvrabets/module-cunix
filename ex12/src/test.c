@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 #include "test.h"
@@ -8,13 +8,13 @@ int test_small()
 {
 	char *foo = (char *)halloc(20);
 	assert( *foo >  0x0000000000000001);
-	free(foo);
-	//foo = (char *) halloc(10000000000000000000);
-	//assert(foo == NULL);
-	//free(foo);
+	myfree(foo);
+	foo = (char *) halloc(10000000000000000000u);
+	assert(foo == NULL);
+	myfree(foo);
  	foo = (char *) halloc(0);
 	assert(foo == NULL);
- 	free(foo);
+ 	myfree(foo);
 	return 0;
 }
 
@@ -28,8 +28,8 @@ int test_long()
 		a[i] = tmp;
 	}
 	for (int i = 0; i < 1000; i++)
-		free(a[i]);
-  	free(a);
+		myfree(a[i]);
+  	myfree(a);
 	return 0;
 }
 

@@ -2,5 +2,5 @@
 # define TEST_H_
 
 void *halloc (size_t size);
-
+void myfree(char* address);
 #endif
