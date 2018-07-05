@@ -4,7 +4,6 @@
 #include <unistd.h>
 
 char mallocArray[55000] = {'\0'};
-
 char *base = mallocArray;
 
 char freeflag = 'f';
@@ -42,21 +41,14 @@ char* find_block(size_t size)
 
 void split_block(char* b, size_t s)
 {
-    char* temp;
-    int b_size = *(int *)(b + 1);
-
-    b_size = b_size - s - 5;
-    //50 - 40 -5
-
-    temp = b + s + 5;
-
-    *temp = freeflag;
-
-    *(int *)(temp + 1) = b_size;
-    *(int *)(b + 1) = s+5;
-    *b = allocate;
-
-
+  char* temp;
+  int b_size = *(int *)(b + 1);
+  b_size = b_size - s - 5;
+  temp = b + s + 5;
+  *temp = freeflag;
+  *(int *)(temp + 1) = b_size;
+  *(int *)(b + 1) = s+5;
+  *b = allocate;
 }
 
 void *halloc(size_t size)
@@ -88,48 +80,39 @@ void *halloc(size_t size)
 
 void myfree(char* address)
 {
-    char *mover, *previous, *next;
-    mover = base;
-
-    int num = *(int *)(mover + 1);
-
-    while(true)
+  char *mover, *previous, *next;
+  mover = base;
+  int num = *(int *)(mover + 1);
+  while(true)
+  {
+    num = *(int *)(mover + 1);
+    if(mover == address)
     {
-        num = *(int *)(mover + 1);
-
-        if(mover == address)
-        {
-            break;
-        }else if(!*mover)
-        {
-            break;
-        }else{
-
-            previous = mover;
-            mover = mover + num;
-            next = mover + *(int *)(mover + 1);
-        }
-    }//end loop
-
+      break;
+    }else if(!*mover)
+    {
+      break;
+    }else{
+      previous = mover;
+      mover = mover + num;
+      next = mover + *(int *)(mover + 1);
+    }
+    }
     if(*next == freeflag)
     {
-        *mover = freeflag;
-        *(int *)(mover + 1) = *(int *)(mover + 1) + *(int *)(next + 1);
+      *mover = freeflag;
+      *(int *)(mover + 1) = *(int *)(mover + 1) + *(int *)(next + 1);
     }
-
     if(*previous == freeflag)
     {
-        *mover = freeflag;
-        *(int *)(previous + 1) = *(int *)(mover + 1) + *(int *)(previous + 1);
+      *mover = freeflag;
+      *(int *)(previous + 1) = *(int *)(mover + 1) + *(int *)(previous + 1);
     }else{
       *address = freeflag;
     }
 }
 
-
-//addr1 =  halloc(8);
-
-void main()
+/*void main()
 {
   char* addr1 = halloc(8);
   char* addr2;
@@ -145,18 +128,18 @@ void main()
 
   char* addr4 = halloc(500);
   printf(" 500 %p \n",addr4);
-}
+}*/
 
-/*void main()
+void main()
 {
   char* addr1 = halloc(8);
   char *foo = (char *)halloc(20);
 	assert( *foo >  0x0000000000000001);
-	free(foo);
+	myfree(foo);
   printf("first assert\n");
   foo = (char *) halloc(10000000000000000000u);
 	assert(foo == NULL);
-	free(foo);
+	myfree(foo);
   printf("second assert\n");
   printf("stage 1 passed\n");
   int **a = (int **)halloc(sizeof(int)* 10000);
@@ -170,4 +153,4 @@ void main()
 		a[i] = tmp;
     printf("cicle %i\n", i);
 	}
-}*/
+}
