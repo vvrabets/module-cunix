@@ -10,7 +10,6 @@ struct block_meta {
   int free;
 };
 
-#define align8(x) (((((x) - 1) >> 3) << 3) + 8)
 #define META_SIZE sizeof(struct block_meta)
 
 void *global_base = NULL;
@@ -53,7 +52,6 @@ void *halloc(size_t size) {
     return NULL;
   }
 
-  size = align8(size);
 
   if (!global_base) {
     block = request_space(NULL, size);
